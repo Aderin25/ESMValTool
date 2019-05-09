@@ -120,9 +120,11 @@ etccdi_yr_list <- c(
   "tnnETCCDI", "tnxETCCDI", "trETCCDI", "tx10pETCCDI",
   "tx90pETCCDI", "txnETCCDI", "txxETCCDI", "wsdiETCCDI"
 )
-# Select one or more fields to be plotted (with the required order) 
-# through the selfields key above
-etccdi_list_import <- etccdi_yr_list
+
+if (!exists("etccdi_list_import")) {
+  etccdi_list_import <- etccdi_yr_list
+}
+
 field_names <- c(hyint_list, etccdi_yr_list)
 
 # region box matrix (predefined following Giorgi et al. 2011,2014): 
