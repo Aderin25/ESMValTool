@@ -1,5 +1,5 @@
 # #############################################################################
-# ExtremeEvents.r
+# extreme_events.R
 #
 # Authors: Björn Brötz (DLR, Germany)
 #          Marit Sandstad (CICERO, Norway)
@@ -25,45 +25,8 @@ library(tools)
 library(yaml)
 library(ncdf4)
 library(ncdf4.helpers)
-
-cdo <- function(command, args = "", input = "", options = "", output = "",
-                stdout = "", noout = F) {
-  if (args != "") args <- paste0(",", args)
-  if (stdout != "") {
-    stdout <- paste0(" > '", stdout, "'")
-    noout <- T
-  }
-  if (input[1] != "") {
-    for (i in 1:length(input)) {
-      input[i] <- paste0("'", input[i], "'")
-    }
-    input <- paste(input, collapse = " ")
-  }
-  output0 <- output
-  if (output != "") {
-    output <- paste0("'", output, "'")
-  } else if (!noout) {
-    output <- tempfile()
-    output0 <- output
-  }
-  argstr <- paste0(
-    options, " ", command, args, " ", input, " ", output,
-    " ", stdout
-  )
-  print(paste("cdo", argstr))
-  ret <- system2("cdo", args = argstr)
-  if (ret != 0) {
-    stop(paste("Failed (", ret, "): cdo", argstr))
-  }
-  return(output0)
-}
-
-nco <- function(cmd, argstr) {
-  ret <- system2(cmd, args = argstr)
-  if (ret != 0) {
-    stop(paste("Failed (", ret, "): ", cmd, " ", argstr))
-  }
-}
+library(scales)
+library(RColorBrewer)  # nolint
 
 provenance_record <- function(infile) {
   xprov <- list(
@@ -81,14 +44,15 @@ provenance_record <- function(infile) {
 }
 
 diag_scripts_dir <- Sys.getenv("diag_scripts")
-source(paste0(diag_scripts_dir, "/extreme_events/cfg_climdex.r"))  # nolint
-source(paste0(diag_scripts_dir, "/extreme_events/cfg_extreme.r"))  # nolint
+source(paste0(diag_scripts_dir, "/shared/external.R"))  # nolint
+source(paste0(diag_scripts_dir, "/extreme_events/cfg_climdex.R"))  # nolint
+source(paste0(diag_scripts_dir, "/extreme_events/cfg_extreme.R"))  # nolint
 source(paste0(diag_scripts_dir,
-         "/extreme_events/common_climdex_preprocessing_for_plots.r"))  # nolint
+         "/extreme_events/common_climdex_preprocessing_for_plots.R"))  # nolint
 source(paste0(diag_scripts_dir,
-         "/extreme_events/make_timeseries_plot.r"))  # nolint
+         "/extreme_events/make_timeseries_plot.R"))  # nolint
 source(paste0(diag_scripts_dir,
-         "/extreme_events/make_Glecker_plot2.r"))  # nolint
+         "/extreme_events/make_glecker_plot.R"))  # nolint
 
 # read settings and metadata files
 args <- commandArgs(trailingOnly = TRUE)
@@ -125,7 +89,6 @@ for (i in 1:length(settings$input_files)) {
   climofiles <- c(climofiles, names(metadata))
 }
 
-field_type0 <- "T2Ds"
 # associated to first climofile
 print(paste(diag_base, ": starting routine"))
 
@@ -258,7 +221,7 @@ if (write_plots) {
   # A climdex processing section is needed here for observation data.
   # CMORized observation data found in the obs directory,
   # has it's climdex indices calculated,
-  # which are then placed in the work/ExtremeEvents directory
+  # which are then placed in the work/extreme_events directory
   #############################
 
   ## Splitting models from observations
@@ -294,7 +257,7 @@ if (write_plots) {
   print("----------------------------")
   if (ts_plt) {
     print("")
-    print(paste0(">>>>>>>> TIME SERIE PROCESSING INITIATION"))
+    print(paste0(">>>>>>>> TIME SERIES PROCESSING INITIATION"))
     plotfiles <- timeseries_main(
       path = work_dir, idx_list = timeseries_idx,
       model_list = setdiff(models_name, reference_datasets),
@@ -306,6 +269,25 @@ if (write_plots) {
     for (fname in plotfiles) {
       provenance[[fname]] <- xprov
     }
+# Each timeseries file gets provenance from its reference dataset
+    for (model in reference_datasets) {
+        ncfiles <- list.files(file.path(work_dir, "timeseries"),
+                              pattern = model, full.names = TRUE)
+        xprov <- provenance_record(climofiles[models == model])
+        for (fname in ncfiles) {
+          provenance[[fname]] <- xprov
+        }
+     }
+# The ensemble timeseries get provenance from all model datasets
+     ncfiles <- list.files(file.path(work_dir, "timeseries"),
+                              pattern = "ETCCDI.*ens", full.names = TRUE)
+
+     ancestors <- sapply(setdiff(models_name, reference_datasets),
+                         grep, climofiles, value = TRUE)
+     xprov <- provenance_record(ancestors)
+     for (fname in ncfiles) {
+       provenance[[fname]] <- xprov
+     }
   }
 
   ###############################
@@ -348,6 +330,11 @@ if (write_plots) {
 
     xprov <- provenance_record(list(climofiles))
     for (fname in plotfiles) {
+      provenance[[fname]] <- xprov
+    }
+    ncfiles <- list.files(file.path(work_dir, "gleckler/Gleck*"))
+    xprov <- provenance_record(climofiles)
+    for (fname in ncfiles) {
       provenance[[fname]] <- xprov
     }
   }

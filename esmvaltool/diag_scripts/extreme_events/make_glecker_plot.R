@@ -1,5 +1,5 @@
 # #########################################################################################################
-# make_Glecker_plot2.r
+# make_glecker_plot.R
 #
 # Author: Christian W. Mohr (CICERO, Norway)
 #         Marit Sandstad (CICERO, Norway)
@@ -17,20 +17,8 @@
 #
 # #########################################################################################################
 
-gleckler_main <- function(path = "./",
-                          idx_list = c(
-                            "tn10pETCCDI_yr", "tn90pETCCDI_yr",
-                            "tx10pETCCDI_yr", "tx90pETCCDI_yr",
-                            "tnnETCCDI_yr", "tnxETCCDI_yr",
-                            "txnETCCDI_yr", "txxETCCDI_yr"
-                          ),
-                          model_list = c(
-                            "EC-EARTH", "HadGEM2-ES",
-                            "MPI-ESM-LR", "IPSL-CM5A-LR",
-                            "MIROC-ESM"
-                          ),
-                          obs_list = c("CanESM2"),
-                          plot_dir = "../plot/ExtremeEvents/",
+gleckler_main <- function(path = "./", idx_list, model_list, obs_list,
+                          plot_dir = "../plot/extreme_events/",
                           promptinput = promptinput,
                           start_yr = 2000, end_yr = 2009) {
 
@@ -49,10 +37,8 @@ gleckler_main <- function(path = "./",
 
   if (promptinput == "y") {
     # Initial nc-file time crop, regrid, land and plot purge
-    unlink(c(
-      paste0(time_cropped, "/*.nc"), paste0(regridded, "/*.nc"),  # nolint
-      paste0(land, "/*.nc")  # nolint
-    ))
+    unlink(c(time_cropped, regridded, land,
+             landmask, tsgrid), recursive = TRUE)
 
     ## Initial grid and landmask creation reset
     grid_and_landmask <- TRUE
@@ -128,25 +114,39 @@ gleckler_main <- function(path = "./",
     )
 
     ## Save Array
+    glecdir <- paste0(path, "/gleckler")  # nolint
+    if (!file.exists(glecdir)) {
+      dir.create(glecdir)
+    }
     saveRDS(object = rmserelarr, file = paste0(
-      plot_dir, "/Gleckler-Array_",  # nolint
+      path, "/gleckler/Gleckler-Array_",  # nolint
       nidx, "-idx_",
       nmodel, "-models_",
       nobs, "-obs", ".RDS"
     ))
     saveRDS(object = returnvalue, file = paste0(
-      plot_dir,
-      "/Gleckler-years.RDS"  # nolint
+      path,
+      "/gleckler/Gleckler-years.RDS"  # nolint
     ))
+
+    # Final cleanup
+    unlink(c(time_cropped, regridded, land,
+             landmask, tsgrid), recursive = TRUE)
   }
 
   #### Gleckler Plotting ####
   rmserelarr <- readRDS(file = paste0(
-    plot_dir, "/Gleckler-Array_",  # nolint
+    path, "/gleckler/Gleckler-Array_",  # nolint
     nidx, "-idx_", nmodel, "-models_",
     nobs, "-obs", ".RDS"
   ))
-  year_range <- readRDS(file = paste0(plot_dir, "/Gleckler-years.RDS"))  # nolint
+  year_range <- readRDS(
+                  file = paste0(
+                           path,
+                           "/gleckler/Gleckler-years.RDS"  # nolint
+                         )
+                )
+
   plotfile <- gleckler_plotting(
     arr = rmserelarr, idx_list = idx_list,
     model_list = model_list, obs_list = obs_list,
@@ -160,8 +160,6 @@ gleckler_main <- function(path = "./",
 
 gleckler_array <- function(path = land, idx_list = gleckler_idx,
                            model_list = model_list, obs_list = obs_list) {
-  library(ncdf4)
-
   ## Produce an array to hold all the model and reanalysis means
 
   ## Input data for testing the plotting routine
@@ -347,7 +345,7 @@ gleckler_array <- function(path = land, idx_list = gleckler_idx,
 
 #### Plotting Routine ####
 gleckler_plotting <- function(arr = rmserelarr, idx_list, model_list,
-                              obs_list, plot_dir = "../plots/ExtremeEvents/",
+                              obs_list, plot_dir = "../plots/extreme_events/",
                               syear = max_start, eyear = min_end) {
   nidx <- length(idx_list) # number of indices
   nmodel <- length(model_list) # number of models
@@ -357,7 +355,6 @@ gleckler_plotting <- function(arr = rmserelarr, idx_list, model_list,
   sclseq <- seq(-0.55, 0.55, 0.1)
 
   ## Colour scale
-  library(RColorBrewer)  # nolint
   glc <- brewer.pal(length(sclseq) - 2, "RdYlBu")  # nolint
   glc <- c("#662506", glc, "#3f007d")
   glc <- rev(glc)
@@ -368,7 +365,7 @@ gleckler_plotting <- function(arr = rmserelarr, idx_list, model_list,
   glbw <- gray(seq(0, 1, length.out = length(sclseq_bw)))
   glbw <- rev(glbw)
 
-  ## Determinng what shapes should be plotted, based on number of observations
+  ## Determining what shapes should be plotted, based on number of observations
   if (nobs == 1) {
     # One reanalysis references
     x1 <- c(0, 1, 1, 0)

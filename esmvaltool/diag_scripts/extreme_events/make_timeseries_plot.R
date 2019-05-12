@@ -1,5 +1,5 @@
 # #############################################################################
-# make_timeseries_plot.r
+# make_timeseries_plot.R
 #
 # Author: Marit Sandstad (CICERO, Norway)
 #       : Christian W. Mohr (CICERO, Norway)
@@ -34,28 +34,21 @@
 ###########################
 
 
-timeseries_main <- function(path = "../work/ExtremeEvents",
-                            idx_list = c(
-                              "tn10pETCCDI_yr", "tn90pETCCDI_yr",
-                              "tx10pETCCDI_yr", "tx90pETCCDI_yr"
-                            ),
-                            model_list = c("IPSL-CM5A-LR", "MIROC-ESM"),
-                            obs_list = c("MERRA2"), plot_dir = "./plot",
+timeseries_main <- function(path = "../work/extreme_events",
+                            idx_list, model_list, obs_list,
+                            plot_dir = "./plot",
                             normalize = FALSE,
                             start_yr = 2000, end_yr = 2006) {
 
   ## For file structure and files
-  tsgrid <- paste(path, "/tsgridDef", sep = "")  # nolint
+  tsgrid <- paste(path, "/tsGridDef", sep = "")  # nolint
   time_cropped <- paste(path, "/timeCropped", sep = "")  # nolint
   landmask <- paste(path, "/landSeaMask.nc", sep = "")  # nolint
   regridded <- paste(path, "/regridded", sep = "")  # nolint
   land <- paste(path, "/Land", sep = "")  # nolint
 
   # Initial nc-file time crop, regrid, land and plot purge
-  unlink(c(
-    paste0(time_cropped, "/*.nc"), paste0(regridded, "/*.nc"),  # nolint
-    paste0(land, "/*.nc")  # nolint
-  ))
+  unlink(c(time_cropped, regridded, land, landmask, tsgrid), recursive = TRUE)
 
   # Initial grid and landmask creation reset
   gridandlandmask <- TRUE
@@ -125,7 +118,8 @@ timeseries_main <- function(path = "../work/ExtremeEvents",
         land = land, idx = idx,
         model_list = model_list,
         obs_list = obs_list,
-        plot_dir = plot_dir, normalize = normalize
+        plot_dir = plot_dir, work_dir = path,
+        normalize = normalize
       )
     }
 
@@ -138,6 +132,10 @@ timeseries_main <- function(path = "../work/ExtremeEvents",
     )
     plotfiles <- c(plotfiles, fname)
   }
+
+  # Final cleanup
+  unlink(c(time_cropped, regridded, land, landmask, tsgrid), recursive = TRUE)
+
   return(plotfiles)
 }
 
@@ -150,8 +148,14 @@ timeseries_main <- function(path = "../work/ExtremeEvents",
 #
 time_series_preprocessing <- function(land = "./Land", idx = "tnnETCCDI_yr",
                                       model_list = model_list,
-                                      obs_list = obs_list, normalize = FALSE,
-                                      plot_dir = "./plot") {
+                                      obs_list = obs_list,
+                                      plot_dir = "./plot",
+                                      work_dir = "./work", normalize = FALSE) {
+
+  tseriesdir <- paste0(work_dir, "/timeseries")  # nolint
+  if (!file.exists(tseriesdir)) {
+    dir.create(tseriesdir)
+  }
 
   ## List of indices which are never normalized:
   pidx <- c(
@@ -241,21 +245,21 @@ time_series_preprocessing <- function(land = "./Land", idx = "tnnETCCDI_yr",
     # Find model ensemble mean
     cdo("ensmean",
       input = file_string_models,
-      output = paste0(plot_dir, "/", idx, "_ensmean_for_timeseries.nc"),
+      output = paste0(tseriesdir, "/", idx, "_ensmean_for_timeseries.nc"),
       options = "-O"
     )
 
     # Find ensemble 25th percentile
     cdo("enspctl",
       args = "25", input = file_string_models,
-      output = paste0(plot_dir, "/", idx, "_25enspctl_for_timeseries.nc"),
+      output = paste0(tseriesdir, "/", idx, "_25enspctl_for_timeseries.nc"),
       options = "-O"
     )
 
     # Find ensemble 75th percentile
     cdo("enspctl",
       args = "75", input = file_string_models,
-      output = paste0(plot_dir, "/", idx, "_75enspctl_for_timeseries.nc"),
+      output = paste0(tseriesdir, "/", idx, "_75enspctl_for_timeseries.nc"),
       options = "-O"
     )
 
@@ -275,7 +279,7 @@ time_series_preprocessing <- function(land = "./Land", idx = "tnnETCCDI_yr",
         file.copy(
           paste0(land, "/fldm_", o),  # nolint
           paste0(
-            plot_dir, "/", idx, "_",
+            tseriesdir, "/", idx, "_",
             modelsandobssplit[obs_order[n]],
             "_for_timeseries.nc"
           )
@@ -319,7 +323,7 @@ time_series_preprocessing <- function(land = "./Land", idx = "tnnETCCDI_yr",
         file.copy(
           paste0(land, "/detrend_std_fldm_", o),  # nolint
           paste0(
-            plot_dir, "/", idx, "_",
+            tseriesdir, "/", idx, "_",
             modelsandobssplit[obs_order[n]],
             "_for_timeseries.nc"
           )
@@ -348,21 +352,21 @@ time_series_preprocessing <- function(land = "./Land", idx = "tnnETCCDI_yr",
     # Find model ensemble mean
     cdo("ensmean",
       input = file_string_models,
-      output = paste0(plot_dir, "/", idx, "_ensmean_for_timeseries.nc"),
+      output = paste0(tseriesdir, "/", idx, "_ensmean_for_timeseries.nc"),
       options = "-O"
     )
 
     # Find ensemble 25th percentile
     cdo("enspctl",
       args = "25", input = file_string_models,
-      output = paste0(plot_dir, "/", idx, "_25enspctl_for_timeseries.nc"),
+      output = paste0(tseriesdir, "/", idx, "_25enspctl_for_timeseries.nc"),
       options = "-O"
     )
 
     # Find ensemble 75th percentile
     cdo("enspctl",
       args = "75", input = file_string_models,
-      output = paste0(plot_dir, "/", idx, "_75enspctl_for_timeseries.nc"),
+      output = paste0(tseriesdir, "/", idx, "_75enspctl_for_timeseries.nc"),
       options = "-O"
     )
 
@@ -385,7 +389,7 @@ time_series_preprocessing <- function(land = "./Land", idx = "tnnETCCDI_yr",
       file.copy(
         paste0(land, "/fldm_", o),  # nolint
         paste0(
-          plot_dir, "/", idx, "_",
+          tseriesdir, "/", idx, "_",
           modelsandobssplit[obs_order[n]], "_for_timeseries.nc"
         )
       )
@@ -409,29 +413,23 @@ time_series_preprocessing <- function(land = "./Land", idx = "tnnETCCDI_yr",
 timeseries_plot <- function(plot_dir = "./plot", idx = "tn10pETCCDI_yr",
                             obs_list, start_yr = 2006, end_yr = 2010,
                             normalize = FALSE) {
-  ## Loading ncdf4 library
-  library(ncdf4)
-
-  ## Loading scales library (required for transpareny in plots)
-  library(scales)
-
   # Drawing parameters
   leg_names <- c(mip_name, obs_list)
 
   ## Reading the netcdf data files into R
   ## First ensemble mean file
-  ensm <- nc_open(paste(plot_dir, "/", idx,
+  ensm <- nc_open(paste(work_dir, "/timeseries/", idx,
     "_ensmean_for_timeseries.nc",
     sep = ""
   ))
 
   ## Then 25th percentile file
-  enspctl25 <- nc_open(paste(plot_dir, "/", idx,
+  enspctl25 <- nc_open(paste(work_dir, "/timeseries/", idx,
     "_25enspctl_for_timeseries.nc",
     sep = ""
   ))
   ## Finally 75th percentile file
-  enspctl75 <- nc_open(paste(plot_dir, "/", idx,
+  enspctl75 <- nc_open(paste(work_dir, "/timeseries/", idx,
     "_75enspctl_for_timeseries.nc",
     sep = ""
   ))
@@ -464,7 +462,7 @@ timeseries_plot <- function(plot_dir = "./plot", idx = "tn10pETCCDI_yr",
   n <- 0
   for (o in obs_list) {
     n <- n + 1
-    nc_obs <- nc_open(paste(plot_dir, "/", idx,
+    nc_obs <- nc_open(paste(work_dir, "/timeseries/", idx,
       "_", o, "_for_timeseries.nc",
       sep = ""
     ))

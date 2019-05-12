@@ -52,20 +52,16 @@ diagnostics:
     variables:
       pr:
         mip: day
-        field: T2Ds
       tas:
         mip: day
-        field: T2Ds
       tasmax:
         mip: day
-        field: T2Ds
       tasmin:
         mip: day
-        field: T2Ds
     
     scripts:
       main:
-        script: extreme_events/ExtremeEvents.r
+        script: extreme_events/extreme_events.R
         reference_datasets: ["ERA-Interim", "BNU-ESM", "ACCESS1-0", "ACCESS1-3"]
         regrid_dataset: ERA-Interim
         mip_name: CMIP
