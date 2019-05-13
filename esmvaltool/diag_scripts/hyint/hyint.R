@@ -114,9 +114,11 @@ var0 <- "pr"
 diag_base <- climolist0$diagnostic
 print(paste0(diag_base, ": starting routine"))
 
-if (length(etccdi_dir) != 1) {
-  etcddi_dir <- work_dir
+if (!exists("etccdi_dir")) {
+  etccdi_dir <- paste0(unlist(strsplit(run_dir, "run"))[1],
+                              "work/extreme_events/main")
 }
+
 dir.create(plot_dir, recursive = T, showWarnings = F)
 dir.create(work_dir, recursive = T, showWarnings = F)
 
