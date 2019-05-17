@@ -87,7 +87,8 @@ for (myname in names(settings)) {
   temp <- get(myname, settings)
   assign(myname, temp)
 }
-metadata <- yaml::read_yaml(settings$input_files)
+
+metadata <- yaml::read_yaml(settings$input_files[1])
 
 ## check required settings
 if (!all(plot_type %in% c(1, 2, 3, 11, 12, 13, 14, 15) ) ) {
@@ -108,15 +109,12 @@ climolist0 <- list0
 
 # get variable name
 varname <- paste0("'", climolist$short_name, "'")
-var0 <- varname
 var0 <- "pr"
 
 diag_base <- climolist0$diagnostic
-print(paste0(diag_base, ": starting routine"))
 
-if (!exists("etccdi_dir")) {
-  etccdi_dir <- paste0(unlist(strsplit(run_dir, "run"))[1],
-                              "work/extreme_events/main")
+if (etccdi_preproc & !exists("etccdi_dir")) {
+  etccdi_dir <- settings$input_files[2]
 }
 
 dir.create(plot_dir, recursive = T, showWarnings = F)
