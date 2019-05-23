@@ -120,15 +120,15 @@ def main(cfg):
                                                     [0, 1, 2])
             new_cube = iris.cube.Cube(new_data)
 
-            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('time'
-                                   ).points, long_name='time'), 0)
-            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('latitude'
-                                   ).points, long_name='latitude'), 1)
-            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('longitude'
-                                   ).points, long_name='longitude'), 2)
+            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('time').points,
+                                                        long_name='time'), 0)
+            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('latitude').points,
+                                                        long_name='latitude'), 1)
+            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('longitude').points,
+                                                        long_name='longitude'), 2)
             new_cube.add_dim_coord(iris.coords.DimCoord(np.arange(0,
-                                   number_drought_charac, 1),
-                                   long_name='z'), 3)
+                                                                  number_drought_charac, 1),
+                                                        long_name='z'), 3)
             # calculate the number of drought events and average duration
             drought_show = new_cube.collapsed('time', spell_no,
                                               threshold=threshold_spi)
