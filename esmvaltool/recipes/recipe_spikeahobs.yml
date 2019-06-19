@@ -1,0 +1,74 @@
+---
+documentation:
+
+  description: |
+    Calculate the SPI of few models
+
+  authors:
+    - schl_ma
+
+  references:
+    - andrews12grl
+
+  projects:
+    - crescendo
+
+preprocessors:
+  preprocessor1:
+    regrid:
+      target_grid: reference_dataset
+      scheme: linear
+
+diagnostics:
+  diagnostic2:
+    description: Calculating SPI index for models
+    variables:
+      pr:
+        reference_dataset: CRU
+        preprocessor: preprocessor1
+        field: T2Ms
+    additional_datasets:
+      {dataset: CRU, mip: Amon, project: OBS, type: reanaly, version: TS4.02,
+       start_year: 1950, end_year: 2000, tier: 2}
+    # {dataset: ACCESS1-0, project: CMIP5, mip: Amon, exp: historical,
+    # ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+    # {dataset: ACCESS1-3, project: CMIP5, mip: Amon, exp: historical,
+    # ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+    {dataset: CNRM-CM5, project: CMIP5, mip: Amon, exp: historical,
+       ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+    {dataset: BNU-ESM, project: CMIP5, mip: Amon, exp: historical,
+       ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+    {dataset: GFDL-CM3, project: CMIP5, mip: Amon, exp: historical,
+       ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+    # {dataset: GFDL-ESM2G, project: CMIP5, mip: Amon, exp: [historical, rcp85],
+    # ensemble: r1i1p1, start_year: 1900, end_year: 2100}
+    # {dataset: GISS-E2-H, project: CMIP5, mip: Amon, exp: [historical, rcp85],
+    # ensemble: r1i1p1, start_year: 1900, end_year: 2100}
+    # {dataset: HadGEM2-CC, project: CMIP5, mip: Amon, exp: [historical, rcp85],
+    # ensemble: r1i1p1, start_year: 1900, end_year: 2100}
+    # {dataset: IPSL-CM5A-LR, project: CMIP5, mip: Amon,
+    # exp: [historical, rcp85], ensemble: r1i1p1,
+    # start_year: 1900, end_year: 2100}
+    # {dataset: IPSL-CM5A-MR, project: CMIP5, mip: Amon,
+    # exp: [historical, rcp85], ensemble: r1i1p1,
+    # start_year: 1900, end_year: 2100}
+    # {dataset: IPSL-CM5B-LR, project: CMIP5, mip: Amon,
+    # exp: [historical, rcp85], ensemble: r1i1p1,
+    # start_year: 1900, end_year: 2100}
+    # {dataset: MPI-ESM-MR, project: CMIP5, mip: Amon, exp: [historical, rcp85],
+    # ensemble: r1i1p1, start_year: 1900, end_year: 2100}
+    # {dataset: NorESM1-M, project: CMIP5, mip: Amon, exp: [historical, rcp85],
+    # ensemble: r1i1p1, start_year: 1900, end_year: 2100}
+
+    scripts:
+      script2:
+        script: droughtindex/diag_save_spi.r
+
+###########################################
+# COLLECT CORRELATIONS AND PLOT
+  spi_collect2:
+    description: Wrapper to collect and plot previously calculated SPI index
+    scripts:
+      spi_collect2:
+        script: droughtindex/collect_spi_obs_multi.py
+        ancestors: ['diagnostic2/script2']

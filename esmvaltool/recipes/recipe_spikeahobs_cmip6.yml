@@ -1,0 +1,55 @@
+---
+documentation:
+
+  description: |
+    Calculate the SPI of few models
+
+  authors:
+    - schl_ma
+
+  references:
+    - andrews12grl
+
+  projects:
+    - crescendo
+
+datasets:
+{dataset: CRU, mip: Amon, project: OBS, type: reanaly, version: TS4.02,
+   start_year: 1950, end_year: 2000, tier: 2}
+# {dataset: BCC-CSM2-MR, institute: BCC, project: CMIP6, exp: historical,
+# ensemble: r1i1p1f1, grid: gn, start_year: 1950, end_year: 2000}
+{dataset: BCC-ESM1, institute: BCC, project: CMIP6, exp: historical,
+   ensemble: r1i1p1f1, grid: gn, start_year: 1950, end_year: 2000}
+{dataset: MRI-ESM2-0, institute: MRI, project: CMIP6, exp: historical,
+   ensemble: r1i1p1f1, grid: gn, start_year: 1950, end_year: 2000}
+# {dataset: CanESM5, institute: CCCma, project: CMIP6, exp: historical,
+# ensemble: r1i1p1f1, grid: gn, start_year: 1950, end_year: 2000}
+# {dataset: MIROC6, institute: MIROC, project: CMIP6, exp: historical,
+# ensemble: r1i1p1f1, grid: gn, start_year: 1950, end_year: 2000}
+
+preprocessors:
+  preprocessor1:
+    regrid:
+      target_grid: reference_dataset
+      scheme: linear
+
+diagnostics:
+  diagnostic2:
+    description: Calculating SPI index for models
+    variables:
+      pr:
+        reference_dataset: CRU
+        preprocessor: preprocessor1
+        field: T2Ms
+
+    scripts:
+      script2:
+        script: droughtindex/diag_save_spi.r
+###########################################
+# COLLECT CORRELATIONS AND PLOT
+  spi_collect2:
+    description: Wrapper to collect and plot previously calculated SPI index
+    scripts:
+      spi_collect2:
+        script: droughtindex/collect_spi_obs_multi.py
+        ancestors: ['diagnostic2/script2']
