@@ -1,0 +1,81 @@
+---
+documentation:
+
+  description: |
+    Calculate the SPI of few models
+
+  authors:
+    - schl_ma
+
+  references:
+    - andrews12grl
+
+  projects:
+    - crescendo
+
+preprocessors:
+  preprocessor2:
+    regrid:
+      target_grid: 2.0x2.0
+      scheme: linear
+
+  preprocessor1:
+    regrid:
+      target_grid: reference_dataset
+      scheme: linear
+
+diagnostics:
+  diagnostic2:
+    description: Calculating SPI index for models
+    variables:
+      pr:
+        reference_dataset: CRU
+        preprocessor: preprocessor1
+        field: T2Ms
+    additional_datasets:
+      - {dataset: CRU, mip: Amon, project: OBS, type: reanaly,
+         version: TS4.02, start_year: 1950, end_year: 2000, tier: 2}
+      - {dataset: CNRM-CM5, project: CMIP5, mip: Amon, exp: historical,
+         ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+      - {dataset: BNU-ESM, project: CMIP5, mip: Amon, exp: historical,
+         ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+      - {dataset: GFDL-CM3, project: CMIP5, mip: Amon, exp: historical,
+         ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+    scripts:
+      script1:
+        script: droughtindex/diag_save_spi.r
+
+  spi_collect2:
+    description: Wrapper to collect and plot previously calculated SPI index
+    scripts:
+      spi_collect2:
+        script: droughtindex/collect_spi_obs_multi.py
+        ancestors: ['diagnostic2/script1']
+
+  diagnostic1:
+    description: Calculating SPI index for models
+    variables:
+      pr:
+        reference_dataset: ACCESS1-0
+        preprocessor: preprocessor2
+        field: T2Ms
+    additional_datasets:
+      - {dataset: ACCESS1-0, project: CMIP5, mip: Amon,
+         exp: [historical, rcp85], ensemble: r1i1p1,
+         start_year: 1950, end_year: 2050}
+      - {dataset: ACCESS1-3, project: CMIP5, mip: Amon,
+         exp: [historical, rcp85], ensemble: r1i1p1,
+         start_year: 1950, end_year: 2050}
+      - {dataset: CNRM-CM5, project: CMIP5, mip: Amon,
+         exp: [historical, rcp85], ensemble: r1i1p1,
+         start_year: 1950, end_year: 2050}
+    scripts:
+      script1:
+        script: droughtindex/diag_save_spi.r
+
+  spi_collect2:
+    description: Wrapper to collect and plot previously calculated SPI index
+    scripts:
+      spi_collect2:
+        script: droughtindex/collect_spi_model.py
+        ancestors: ['diagnostic1/script1']
