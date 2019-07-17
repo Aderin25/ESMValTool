@@ -1,0 +1,96 @@
+---
+documentation:
+
+  description: |
+    Calculate the SPEI of few models
+
+  authors:
+    - schl_ma
+
+  references:
+    - andrews12grl
+
+  projects:
+    - crescendo
+
+preprocessors:
+  preprocessor1:
+    regrid:
+      target_grid: reference_dataset
+      scheme: linear
+  preprocessor2:
+    regrid:
+      target_grid: 2.0x2.0
+      scheme: linear
+
+diagnostics:
+  diagnostic1:
+    description: Calculating SPI index for models
+    variables:
+      pr:
+        reference_dataset: CRU
+        preprocessor: preprocessor1
+        field: T2Ms
+      tas:
+        reference_dataset: CRU
+        preprocessor: preprocessor1
+        field: T2Ms
+    additional_datasets:
+      - {dataset: CRU, mip: Amon, project: OBS, type: reanaly,
+         version: TS4.02, start_year: 1950, end_year: 2000, tier: 2}
+      - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
+         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2000}
+      - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
+         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2000}
+      - {dataset: CanESM5, mip: Amon, project: CMIP6,
+         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2000}
+
+    scripts:
+      script1:
+        script: droughtindex/diag_save_spi.r
+
+  spi_collect1:
+    description: Wrapper to collect and plot previously calculated SPI index
+    scripts:
+      spi_collect1:
+        script: droughtindex/collect_spei_obs_multi.py
+        ancestors: ['diagnostic1/script1']
+  diagnostic2:
+    description: Calculating SPEI index for models
+    variables:
+      pr:
+        reference_dataset: BCC-CSM2-MR
+        preprocessor: preprocessor2
+        field: T2Ms
+      tas:
+        reference_dataset: BCC-CSM2-MR
+        preprocessor: preprocessor2
+        field: T2Ms
+    additional_datasets:
+      - {dataset: BCC-CSM2-MR, mip: Amon, project: CMIP6,
+         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1900, end_year: 2010}
+      - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
+         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1900, end_year: 2010}
+      - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
+         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1900, end_year: 2010}
+      - {dataset: CanESM5, mip: Amon, project: CMIP6,
+         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1900, end_year: 2010}
+      - {dataset: MIROC6, mip: Amon, project: CMIP6,
+         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1900, end_year: 2010}
+    scripts:
+      script2:
+        script: droughtindex/diag_save_spei.r
+  spei_collect2:
+    description: Wrapper to collect and plot previously calculated SPI index
+    scripts:
+      spei_collect2:
+        script: droughtindex/collect_spei_model.py
+        ancestors: ['diagnostic2/script2']

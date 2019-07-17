@@ -1,0 +1,41 @@
+---
+
+documentation:
+
+  description: |
+    Produce the histogram SPI plots of few models
+
+  authors:
+    - berg_pe
+
+  references:
+    - acknow_project
+
+  projects:
+    - c3s-magic
+
+datasets:
+ - {dataset: CRU, mip: Amon, project: OBS, type: reanaly, version: TS4.02,
+   start_year: 1950, end_year: 2000, tier: 2}
+ - {dataset: ACCESS1-0, project: CMIP5, mip: Amon, exp: historical,
+   ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+ - {dataset: ACCESS1-3, project: CMIP5, mip: Amon, exp: historical,
+   ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+
+preprocessors:
+  preprocessor1:
+    regrid:
+      target_grid: reference_dataset
+      scheme: linear
+
+diagnostics:
+  diagnostic1:
+    description: Calculating SPI index
+    variables:
+      pr:
+        reference_dataset: CRU
+        preprocessor: preprocessor1
+        field: T2Ms
+    scripts:
+      script1:
+        script: droughtindex/diag_spi_sixmonths.r
