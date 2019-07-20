@@ -47,9 +47,9 @@ def main(cfg):
     ----------
     cfg : dict
     """
-    ###########################################################################
+    ######################################################################
     # Read recipe data
-    ###########################################################################
+    ######################################################################
 
     # Make an aggregator from the user function.
     spell_no = Aggregator('spell_count', count_spells,
@@ -108,34 +108,32 @@ def main(cfg):
                                                     [0, 1, 2])
             new_cube = iris.cube.Cube(new_data)
 
-            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('time').points,
-                                                        long_name='time'), 0)
-            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('latitude').points,
-                                                        long_name='latitude'), 1)
-            new_cube.add_dim_coord(iris.coords.DimCoord(tscube.coord('longitude').points,
-                                                        long_name='longitude'), 2)
-            new_cube.add_dim_coord(iris.coords.DimCoord(np.arange(0,
-                                                                  number_drought_charac, 1),
-                                                        long_name='z'), 3)
+            new_cube.add_dim_coord(iris.coords.DimCoord(
+                tscube.coord('time').points, long_name='time'), 0)
+            new_cube.add_dim_coord(iris.coords.DimCoord(
+                tscube.coord('latitude').points, long_name='latitude'), 1)
+            new_cube.add_dim_coord(iris.coords.DimCoord(
+                tscube.coord('longitude').points, long_name='longitude'), 2)
+            new_cube.add_dim_coord(iris.coords.DimCoord(
+                np.arange(0, number_drought_charac, 1), long_name='z'), 3)
+
             # calculate the number of drought events and average duration
             drought_show = new_cube.collapsed('time', spell_no,
                                               threshold=threshold_spi)
             drought_show.rename('Drought characteristics')
-            # length of time series
             time_len = len(new_cube.coord('time').points) / 12.0
             # Convert number of droughtevents to frequency (per year)
             drought_show.data[:, :, 0] = drought_show.data[:, :,
                                                            0] / time_len
             all_drought_hist[:, :, :, iii] = drought_show.data
-            drought_numbers_level = np.arange(0, 0.6, 0.05)
-            # Put the data on cube2 as it contains metadata plot_map_spi needs
+            drought_numbers_level = np.arange(0, 0.4, 0.05)
             cube2.data = drought_show.data[:, :, 0]
             plot_map_spi(cfg, cube2, drought_numbers_level,
                          add_to_filename='Historic_No_of_Events_per_year',
                          name='Historic_Number of Events per year')
+
             # plot the average duration of drought events
-            drought_numbers_level = np.arange(0, 6, 1)  # set color levels
-            # Put the data on cube2,it contains metadata plot_map_spi needs
+            drought_numbers_level = np.arange(0, 6, 1)
             cube2.data = drought_show.data[:, :, 1]
             plot_map_spi(cfg, cube2, drought_numbers_level,
                          add_to_filename='Historic_Dur_of_Events',
@@ -143,7 +141,6 @@ def main(cfg):
 
             # plot the average severity index of drought events
             drought_numbers_level = np.arange(0, 9, 1)
-            # set color levels
             cube2.data = drought_show.data[:, :, 2]
             plot_map_spi(cfg, cube2, drought_numbers_level,
                          add_to_filename='Historic_Sev_index_of_Events',
@@ -151,7 +148,6 @@ def main(cfg):
 
             # plot the average spi of drought events
             drought_numbers_level = np.arange(-2.8, -1.8, 0.2)
-            # set color levels
             cube2.data = drought_show.data[:, :, 3]
             plot_map_spi(cfg, cube2, drought_numbers_level,
                          add_to_filename='Historic_Avr_spi_of_Events',
@@ -190,7 +186,7 @@ def main(cfg):
             all_drought_rcp85[:, :, :, iii] = drought_show.data
 
             # plot the number of drought events
-            drought_numbers_level = np.arange(0, 0.6, 0.05)
+            drought_numbers_level = np.arange(0, 0.4, 0.05)
             # set color levels
             # use cube2 to get metadata
             cube2.data = drought_show.data[:, :, 0]
@@ -199,7 +195,7 @@ def main(cfg):
                          name='RCP85_Number of Events per year')
 
             # plot the average duration of drought events
-            drought_numbers_level = np.arange(0, 6, 1)  # set color levels
+            drought_numbers_level = np.arange(0, 6, 1)
             # use cube2 to get metadata
             cube2.data = drought_show.data[:, :, 1]
             plot_map_spi(cfg, cube2, drought_numbers_level,
@@ -207,7 +203,7 @@ def main(cfg):
                          name='RCP85_Duration of Events(month)')
 
             # plot the average severity index of drought events
-            drought_numbers_level = np.arange(0, 9, 1)  # set color levels
+            drought_numbers_level = np.arange(0, 9, 1)
             # use cube2 to get metadata
             cube2.data = drought_show.data[:, :, 2]
             plot_map_spi(cfg, cube2, drought_numbers_level,
@@ -233,7 +229,7 @@ def main(cfg):
     print("all_drought_rcp85_mean")
     print(all_drought_rcp85_mean)
 
-    # Historic 
+    # Historic
     data_dict = {}
     data_dict['data'] = all_drought_hist_mean[:, :, 0]
     data_dict['datasetname'] = 'MultiModelMean'
@@ -263,7 +259,7 @@ def main(cfg):
     data_dict['drought_numbers_level'] = np.arange(-2.8, -1.8, 0.2)
     plot_map_spi_multi(cfg, data_dict, colormap='gnuplot')
 
-    # RCP85 
+    # RCP85
     data_dict['data'] = all_drought_rcp85_mean[:, :, 0]
     data_dict['model_kind'] = 'RCP85'
     data_dict['drought_char'] = 'Number of Events per year'
