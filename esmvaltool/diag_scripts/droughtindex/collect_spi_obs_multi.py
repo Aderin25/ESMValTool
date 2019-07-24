@@ -169,8 +169,8 @@ def main(cfg):
 
         drought_numbers_level = np.arange(0, 0.4, 0.05)
         # length of time series
-        time_length = len(new_cube.coord('time').points) / 12.0
-        cube2.data = drought_show.data[:, :, 0] / time_length
+        # time_length = len(new_cube.coord('time').points) / 12.0
+        cube2.data = drought_show.data[:, :, 0]
         plot_map_spi(cfg, cube2, drought_numbers_level,
                      add_to_filename='No_of_Events',
                      name='Number of Events per year')

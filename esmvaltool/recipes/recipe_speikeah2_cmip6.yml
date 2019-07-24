@@ -25,7 +25,7 @@ preprocessors:
 
 diagnostics:
   diagnostic1:
-    description: Calculating SPI index for models
+    description: Calculating SPEI index for models
     variables:
       pr:
         reference_dataset: CRU
@@ -50,47 +50,12 @@ diagnostics:
 
     scripts:
       script1:
-        script: droughtindex/diag_save_spi.r
+        script: droughtindex/diag_save_spei.r
 
-  spi_collect1:
-    description: Wrapper to collect and plot previously calculated SPI index
+  
+  spei_collect1:
+    description: Wrapper to collect and plot previously calculated SPEI index
     scripts:
-      spi_collect1:
+      spei_collect1:
         script: droughtindex/collect_spei_obs_multi.py
         ancestors: ['diagnostic1/script1']
-  diagnostic2:
-    description: Calculating SPEI index for models
-    variables:
-      pr:
-        reference_dataset: BCC-CSM2-MR
-        preprocessor: preprocessor2
-        field: T2Ms
-      tas:
-        reference_dataset: BCC-CSM2-MR
-        preprocessor: preprocessor2
-        field: T2Ms
-    additional_datasets:
-      - {dataset: BCC-CSM2-MR, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1900, end_year: 2010}
-      - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1900, end_year: 2010}
-      - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1900, end_year: 2010}
-      - {dataset: CanESM5, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1900, end_year: 2010}
-      - {dataset: MIROC6, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1900, end_year: 2010}
-    scripts:
-      script2:
-        script: droughtindex/diag_save_spei.r
-  spei_collect2:
-    description: Wrapper to collect and plot previously calculated SPI index
-    scripts:
-      spei_collect2:
-        script: droughtindex/collect_spei_model.py
-        ancestors: ['diagnostic2/script2']
