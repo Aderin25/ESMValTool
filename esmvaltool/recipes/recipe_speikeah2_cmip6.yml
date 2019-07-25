@@ -22,7 +22,6 @@ preprocessors:
     regrid:
       target_grid: 2.0x2.0
       scheme: linear
-
 diagnostics:
   diagnostic1:
     description: Calculating SPEI index for models
@@ -52,10 +51,44 @@ diagnostics:
       script1:
         script: droughtindex/diag_save_spei.r
 
-  
   spei_collect1:
     description: Wrapper to collect and plot previously calculated SPEI index
     scripts:
       spei_collect1:
         script: droughtindex/collect_spei_obs_multi.py
         ancestors: ['diagnostic1/script1']
+
+  diagnostic2:
+    description: Calculating SPEI index for models
+    variables:
+      pr:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2Ms
+      tas:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2Ms
+    additional_datasets:
+      - {dataset: MIROC6, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2050}
+      - {dataset: GFDL-CM4, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gr1, start_year: 1950, end_year: 2050}
+      - {dataset: BCC-CSM2-MR, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2050}
+      - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2050}
+    scripts:
+      script2:
+        script: droughtindex/diag_save_spei.r
+
+  spei_collect2:
+    description: Wrapper to collect and plot previously calculated SPEI index
+    scripts:
+      spei_collect2:
+        script: droughtindex/collect_spei_model.py
+        ancestors: ['diagnostic2/script2']
