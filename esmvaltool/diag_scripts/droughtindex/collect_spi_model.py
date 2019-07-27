@@ -59,7 +59,7 @@ def main(cfg):
     threshold_spi = -2.0
     number_drought_charac = 4
     first_run = 1
-    end_time = 2050
+    end_time = 2100
 
     # Get filenames of input files produced by diag_spi.r
     input_filenames = (cfg[n.INPUT_FILES])[0] + "/*.nc"
@@ -88,15 +88,15 @@ def main(cfg):
             print("iii")
             print(iii)
             first_run = 0
-        # Test if time series goes until 2050/12
+        # Test if time series goes until 2100/12
         timecheck = time.units.date2num(datetime.datetime(end_time, 11, 30,
                                                           0, 0, 0))
         lasttime = cube.coord('time').points[-1]
 
         if lasttime > timecheck:
-            # extract time series from 1950-2000 historical model data
-            start = datetime.datetime(1950, 1, 15, 0, 0, 0)
-            end = datetime.datetime(2000, 12, 16, 0, 0, 0)
+            # extract time series from 1905-2005 historical model data
+            start = datetime.datetime(1905, 1, 15, 0, 0, 0)
+            end = datetime.datetime(2005, 12, 16, 0, 0, 0)
             stime = time.nearest_neighbour_index(time.units.date2num(start))
             etime = time.nearest_neighbour_index(time.units.date2num(end))
             tscube = cube[stime:etime, :, :]
@@ -153,7 +153,7 @@ def main(cfg):
                          add_to_filename='Historic_Avr_spi_of_Events',
                          name='Historic_Average spi of Events')
             # extract time series from 2050-2100 rcp model data
-            start = datetime.datetime(2000, 1, 15, 0, 0, 0)
+            start = datetime.datetime(2050, 1, 15, 0, 0, 0)
             end = datetime.datetime(end_time, 12, 16, 0, 0, 0)
             stime = time.nearest_neighbour_index(time.units.date2num(start))
             etime = time.nearest_neighbour_index(time.units.date2num(end))
