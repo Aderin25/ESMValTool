@@ -3,7 +3,6 @@ documentation:
 
   description: |
     Calculate the SPEI of few models
-
   authors:
     - schl_ma
 
@@ -37,16 +36,18 @@ diagnostics:
     additional_datasets:
       - {dataset: CRU, mip: Amon, project: OBS, type: reanaly,
          version: TS4.02, start_year: 1950, end_year: 2000, tier: 2}
+      - {dataset: MIROC6, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2000}
+      - {dataset: GFDL-CM4, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gr1, start_year: 1950, end_year: 2000}
       - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
          grid: gn, start_year: 1950, end_year: 2000}
       - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
          grid: gn, start_year: 1950, end_year: 2000}
-      - {dataset: CanESM5, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2000}
-
     scripts:
       script1:
         script: droughtindex/diag_save_spei.r

@@ -3,7 +3,6 @@ documentation:
 
   description: |
     Calculate the SPI of few models
-
   authors:
     - schl_ma
 
@@ -18,6 +17,10 @@ preprocessors:
     regrid:
       target_grid: reference_dataset
       scheme: linear
+  preprocessor2:
+    regrid:
+      target_grid: 2.0x2.0
+      scheme: linear
 
 diagnostics:
   diagnostic1:
@@ -30,15 +33,19 @@ diagnostics:
     additional_datasets:
       - {dataset: CRU, mip: Amon, project: OBS, type: reanaly,
          version: TS4.02, start_year: 1950, end_year: 2000, tier: 2}
+      - {dataset: MIROC6, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2000}
+      - {dataset: GFDL-CM4, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gr1, start_year: 1950, end_year: 2000}
       - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
          grid: gn, start_year: 1950, end_year: 2000}
       - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
          grid: gn, start_year: 1950, end_year: 2000}
-      - {dataset: CanESM5, mip: Amon, project: CMIP6,
-         exp: [historical, rcp85], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2010}
+
     scripts:
       script1:
         script: droughtindex/diag_save_spi.r
@@ -49,3 +56,34 @@ diagnostics:
       spi_collect1:
         script: droughtindex/collect_spi_obs_multi.py
         ancestors: ['diagnostic1/script1']
+
+  diagnostic2:
+    description: Calculating SPI index for models
+    variables:
+      pr:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2Ms
+    additional_datasets:
+      - {dataset: MIROC6, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2050}
+      - {dataset: GFDL-CM4, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gr1, start_year: 1950, end_year: 2050}
+      - {dataset: BCC-CSM2-MR, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2050}
+      - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
+         exp: [historical, ssp585], ensemble: r1i1p1f1,
+         grid: gn, start_year: 1950, end_year: 2050}
+    scripts:
+      script2:
+        script: droughtindex/diag_save_spi.r
+
+  spi_collect2:
+    description: Wrapper to collect and plot previously calculated SPI index
+    scripts:
+      spi_collect2:
+        script: droughtindex/collect_spi_model.py
+        ancestors: ['diagnostic2/script2']
