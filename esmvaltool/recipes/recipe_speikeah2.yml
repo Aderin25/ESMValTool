@@ -3,7 +3,6 @@ documentation:
 
   description: |
     Calculate the SPEI of few models
-
   authors:
     - schl_ma
 
@@ -29,28 +28,24 @@ diagnostics:
     description: Calculating SPEI index for models 
     variables:
       pr:
-        reference_dataset: ACCESS1-0
+        reference_dataset: MIROC5
         preprocessor: preprocessor1
         field: T2Ms
       tas:
-        reference_dataset: ACCESS1-0
+        reference_dataset: MIROC5
         preprocessor: preprocessor1
         field: T2Ms
 
     additional_datasets:
-      - {dataset: ACCESS1-0, project: CMIP5, mip: Amon,
+      - {dataset: MIROC5, project: CMIP5, mip: Amon,
          exp: [historical, rcp85], ensemble: r1i1p1,
-         start_year: 1900, end_year: 2100}
-      - {dataset: ACCESS1-3, project: CMIP5, mip: Amon,
+         start_year: 1950, end_year: 2100}
+      - {dataset: GFDL-CM3, project: CMIP5, mip: Amon,
          exp: [historical, rcp85], ensemble: r1i1p1,
-         start_year: 1900, end_year: 2100}
-      - {dataset: CNRM-CM5, project: CMIP5, mip: Amon,
+         start_year: 1950, end_year: 2050}
+      - {dataset: bcc-csm1-1-m, project: CMIP5, mip: Amon,
          exp: [historical, rcp85], ensemble: r1i1p1,
-         start_year: 1900, end_year: 2100}
-      - {dataset: BNU-ESM, project: CMIP5, mip: Amon,
-         exp: [historical, rcp85], ensemble: r1i1p1,
-         start_year: 1900, end_year: 2100}
-
+         start_year: 1950, end_year: 2050}
     scripts:
       script1:
         script: droughtindex/diag_save_spei.r
@@ -78,20 +73,19 @@ diagnostics:
          version: TS4.02, start_year: 1950, end_year: 2000, tier: 2}
       # - {dataset: ERA-Interim, mip: Amon, project: OBS, type: reanaly,
       #   version: 1, start_year: 1980, end_year: 2005, tier: 3}
-      - {dataset: CNRM-CM5, project: CMIP5, mip: Amon, exp: historical,
-         ensemble: r1i1p1, start_year: 1950, end_year: 2000}
-      - {dataset: BNU-ESM, project: CMIP5, mip: Amon, exp: historical,
+      - {dataset: MIROC5, project: CMIP5, mip: Amon, exp: historical,
          ensemble: r1i1p1, start_year: 1950, end_year: 2000}
       - {dataset: GFDL-CM3, project: CMIP5, mip: Amon, exp: historical,
          ensemble: r1i1p1, start_year: 1950, end_year: 2000}
-
+      - {dataset: bcc-csm1-1-m, project: CMIP5, mip: Amon, exp: historical,
+         ensemble: r1i1p1, start_year: 1950, end_year: 2000}
     scripts:
       script2:
         script: droughtindex/diag_save_spei.r
 
-  spi_collect2:
-    description: Wrapper to collect and plot previously calculated SPI index
+  spei_collect2:
+    description: Wrapper to collect and plot previously calculated SPEI index
     scripts:
-      spi_collect2:
+      spei_collect2:
         script: droughtindex/collect_spei_obs_multi.py
         ancestors: ['diagnostic2/script2']
