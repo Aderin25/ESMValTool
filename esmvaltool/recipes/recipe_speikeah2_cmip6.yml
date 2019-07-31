@@ -35,19 +35,22 @@ diagnostics:
         field: T2Ms
     additional_datasets:
       - {dataset: CRU, mip: Amon, project: OBS, type: reanaly,
-         version: TS4.02, start_year: 1950, end_year: 2000, tier: 2}
+         version: TS4.02, start_year: 1905, end_year: 2005, tier: 2}
       - {dataset: MIROC6, mip: Amon, project: CMIP6,
-         exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2000}
+         exp: historical, ensemble: r1i1p1f1,
+         grid: gn, start_year: 1905, end_year: 2005}
       - {dataset: GFDL-CM4, mip: Amon, project: CMIP6,
-         exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gr1, start_year: 1950, end_year: 2000}
-      - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
-         exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2000}
-      - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
-         exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2000}
+         exp: historical, ensemble: r1i1p1f1,
+         grid: gr1, start_year: 1905, end_year: 2005}
+      - {dataset: IPSL-CM6A-LR, mip: Amon, project: CMIP6,
+         exp: historical, ensemble: r1i1p1f1,
+         grid: gr, start_year: 1905, end_year: 2005}
+      # - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
+      #   exp: historical, ensemble: r1i1p1f1,
+      #   grid: gn, start_year: 1905, end_year: 2005}
+      # - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
+      #   exp: historical, ensemble: r1i1p1f1,
+      #   grid: gn, start_year: 1905, end_year: 2005}
     scripts:
       script1:
         script: droughtindex/diag_save_spei.r
@@ -73,16 +76,19 @@ diagnostics:
     additional_datasets:
       - {dataset: MIROC6, mip: Amon, project: CMIP6,
          exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2050}
+         grid: gn, start_year: 1950, end_year: 2100}
       - {dataset: GFDL-CM4, mip: Amon, project: CMIP6,
          exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gr1, start_year: 1950, end_year: 2050}
-      - {dataset: BCC-CSM2-MR, mip: Amon, project: CMIP6,
+         grid: gr1, start_year: 1950, end_year: 2100}
+      - {dataset: IPSL-CM6A-LR, mip: Amon, project: CMIP6,
          exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2050}
-      - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
-         exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2050}
+         grid: gr, start_year: 1950, end_year: 2100}
+      # - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
+      #   exp: [historical, ssp585], ensemble: r1i1p1f1,
+      #   grid: gn, start_year: 1950, end_year: 2100}
+      # - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
+      #   exp: [historical, ssp585], ensemble: r1i1p1f1,
+      #   grid: gn, start_year: 1950, end_year: 2100}
     scripts:
       script2:
         script: droughtindex/diag_save_spei.r

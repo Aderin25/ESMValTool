@@ -29,19 +29,22 @@ diagnostics:
     description: Calculating SPI index for models
     variables:
       pr:
-        reference_dataset: MIROC5
+        reference_dataset: MIROC-ESM
         preprocessor: preprocessor1
         field: T2Ms
     additional_datasets:
-      - {dataset: MIROC5, project: CMIP5, mip: Amon,
+      - {dataset: MIROC-ESM, project: CMIP5, mip: Amon,
          exp: [historical, rcp85], ensemble: r1i1p1,
-         start_year: 1950, end_year: 2050}
+         start_year: 1950, end_year: 2100}
       - {dataset: GFDL-CM3, project: CMIP5, mip: Amon,
          exp: [historical, rcp85], ensemble: r1i1p1,
-         start_year: 1950, end_year: 2050}
-      - {dataset: bcc-csm1-1-m, project: CMIP5, mip: Amon,
-         exp: [historical, rcp85], ensemble: r1i1p1,
-         start_year: 1950, end_year: 2050}
+         start_year: 1950, end_year: 2100}
+      - {dataset: IPSL-CM5A-LR, project: CMIP5, mip: Amon,
+         exp: [historical,rcp85], ensemble: r1i1p1, 
+         start_year: 1950, end_year: 2100}
+      # - {dataset: bcc-csm1-1-m, project: CMIP5, mip: Amon,
+      #   exp: [historical, rcp85], ensemble: r1i1p1,
+      #   start_year: 1950, end_year: 2100}
 
     scripts:
       script1:
@@ -62,13 +65,15 @@ diagnostics:
         field: T2Ms
     additional_datasets:
       - {dataset: CRU, mip: Amon, project: OBS, type: reanaly,
-         version: TS4.02, start_year: 1950, end_year: 2000, tier: 2}
-      - {dataset: MIROC5, project: CMIP5, mip: Amon, exp: historical,
-         ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+         version: TS4.02, start_year: 1905, end_year: 2005, tier: 2}
+      - {dataset: MIROC-ESM, project: CMIP5, mip: Amon, exp: historical,
+         ensemble: r1i1p1, start_year: 1905, end_year: 2005}
       - {dataset: GFDL-CM3, project: CMIP5, mip: Amon, exp: historical,
-         ensemble: r1i1p1, start_year: 1950, end_year: 2000}
-      - {dataset: bcc-csm1-1-m, project: CMIP5, mip: Amon, exp: historical,
-         ensemble: r1i1p1, start_year: 1950, end_year: 2000}
+         ensemble: r1i1p1, start_year: 1905, end_year: 2005}
+      - {dataset: IPSL-CM5A-LR, project: CMIP5, mip: Amon, exp: historical,
+         ensemble: r1i1p1, start_year: 1905, end_year: 2005}
+      # - {dataset: bcc-csm1-1-m, project: CMIP5, mip: Amon, exp: historical,
+      #   ensemble: r1i1p1, start_year: 1905, end_year: 2005}
     scripts:
       script2:
         script: droughtindex/diag_save_spi.r
