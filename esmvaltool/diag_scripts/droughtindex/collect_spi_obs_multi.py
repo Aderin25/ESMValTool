@@ -76,13 +76,11 @@ def main(cfg):
         cube2 = cube.collapsed(coords, iris.analysis.MEAN)
 
         if first_run == 1:
-            shape_all = (cube2.data.shape + (number_drought_charac,)
-                         + (len(os.listdir((cfg[n.INPUT_FILES])[0])) - 1,))
-            print("shape_all")
-            print(shape_all)
-            all_drought = np.zeros(shape_all)
-            print("iii")
-            print(iii)
+            files = os.listdir((cfg[n.INPUT_FILES])[0])
+            ncfiles = list(filter(lambda f: f.endswith('.nc'),files))
+            shape_all = cube2.data.shape + (number_drought_charac,) + \
+                (len(ncfiles) -1 ,)
+            all_drought = np.full(shape_all, np.nan)
             first_run = 0
 
         coords = ('longitude', 'latitude')
@@ -114,8 +112,8 @@ def main(cfg):
                  + 1]).collapsed(coords,
                                  iris.analysis.MEAN, weights=cube_grid_areas)
 
-        start = datetime.datetime(1901, 1, 15, 0, 0, 0)
-        end = datetime.datetime(2001, 12, 16, 0, 0, 0)
+        start = datetime.datetime(1905, 1, 15, 0, 0, 0)
+        end = datetime.datetime(2005, 12, 16, 0, 0, 0)
         time = cube5.coord('time')
 
         plot_time_series_spi(cfg, cube5, add_to_filename)
@@ -126,8 +124,8 @@ def main(cfg):
                               units_func=lambda units: 1)
 
         # extract time series from 1901-2001 observ and hist. model data
-        start = datetime.datetime(1901, 1, 15, 0, 0, 0)
-        end = datetime.datetime(2001, 12, 16, 0, 0, 0)
+        start = datetime.datetime(1905, 1, 15, 0, 0, 0)
+        end = datetime.datetime(2005, 12, 16, 0, 0, 0)
         time = cube.coord('time')
 
         # make a new cube to increase the size of the data array
@@ -239,27 +237,28 @@ def main(cfg):
     # CRU_OBS MultiModelMean
     data_dict['data'] = all_drought_obs[:, :, 0]
     data_dict['datasetname'] = 'Observations'
-    data_dict['model_kind'] = 'CRU_OBS'
+    data_dict['model_kind'] = 'ERA-Interim'
     data_dict['drought_char'] = 'Number of Events per year'
-    data_dict['filename'] = 'CRU_OBS_No_of_Events_per_year'
+    data_dict['filename'] = 'ERA-Interim_No_of_Events_per_year'
     data_dict['drought_numbers_level'] = np.arange(0, 0.4, 0.05)
     plot_map_spi_multi(cfg, data_dict, colormap='gnuplot')
 
     data_dict['data'] = all_drought_obs[:, :, 1]
     data_dict['drought_char'] = 'Duration of Events [month]'
-    data_dict['filename'] = 'CRU_OBS_Dur_of_Events'
+    data_dict['filename'] = 'ERA-Interim_Dur_of_Events'
     data_dict['drought_numbers_level'] = np.arange(0, 7, 1)
     plot_map_spi_multi(cfg, data_dict, colormap='gnuplot')
 
     data_dict['data'] = all_drought_obs[:, :, 2]
     data_dict['drought_char'] = 'Severity Index of Events'
-    data_dict['filename'] = 'CRU_OBS_Sev_index_of_Events'
+    data_dict['filename'] = 'ERA-Interim_Sev_index_of_Events'
     data_dict['drought_numbers_level'] = np.arange(0, 9, 1)
     plot_map_spi_multi(cfg, data_dict, colormap='gnuplot')
 
     data_dict['data'] = all_drought_obs[:, :, 3]
     data_dict['drought_char'] = 'Average SPI of Events'
-    data_dict['filename'] = 'CRU_OBS_Avr_spi_of_Events'
+    data_dict['filename'] = 'ERA-Interim
+_Avr_spi_of_Events'
     data_dict['drought_numbers_level'] = np.arange(-2.8, -1.8, 0.2)
     plot_map_spi_multi(cfg, data_dict, colormap='gnuplot')
 

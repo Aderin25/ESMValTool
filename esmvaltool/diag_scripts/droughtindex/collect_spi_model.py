@@ -79,14 +79,12 @@ def main(cfg):
         cube2 = cube.collapsed(coords, iris.analysis.MEAN)  # 3D to 2D
 
         if first_run == 1:
-            shape_all = (cube2.data.shape + (number_drought_charac,)
-                         + (len(os.listdir((cfg[n.INPUT_FILES])[0])),))
-            print("shape_all")
-            print(shape_all)
-            all_drought_hist = np.zeros(shape_all)
-            all_drought_rcp85 = np.zeros(shape_all)
-            print("iii")
-            print(iii)
+            files = os.listdir((cfg[n.INPUT_FILES])[0])
+            ncfiles = list(filter(lambda f: f.endswith('.nc'), files))
+            shape_all = cube2.data.shape + (number_drought_charac,) + \
+                (len(ncfiles),)
+            all_drought_hist = np.full(shape_all, np.nan)
+            all_drought_rcp85 = np.full(shape_all, np.nan)
             first_run = 0
         # Test if time series goes until 2100/12
         timecheck = time.units.date2num(datetime.datetime(end_time, 11, 30,
@@ -94,9 +92,9 @@ def main(cfg):
         lasttime = cube.coord('time').points[-1]
 
         if lasttime > timecheck:
-            # extract time series from 1905-2005 historical model data
-            start = datetime.datetime(1905, 1, 15, 0, 0, 0)
-            end = datetime.datetime(2005, 12, 16, 0, 0, 0)
+            # extract time series from 1950-2000 historical model data
+            start = datetime.datetime(1950, 1, 15, 0, 0, 0)
+            end = datetime.datetime(2000, 12, 16, 0, 0, 0)
             stime = time.nearest_neighbour_index(time.units.date2num(start))
             etime = time.nearest_neighbour_index(time.units.date2num(end))
             tscube = cube[stime:etime, :, :]

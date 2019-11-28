@@ -13,55 +13,11 @@ documentation:
     - crescendo
 
 preprocessors:
-  preprocessor1:
-    regrid:
-      target_grid: reference_dataset
-      scheme: linear
   preprocessor2:
     regrid:
       target_grid: 2.0x2.0
       scheme: linear
 diagnostics:
-  diagnostic1:
-    description: Calculating SPEI index for models
-    variables:
-      pr:
-        reference_dataset: CRU
-        preprocessor: preprocessor1
-        field: T2Ms
-      tas:
-        reference_dataset: CRU
-        preprocessor: preprocessor1
-        field: T2Ms
-    additional_datasets:
-      - {dataset: CRU, mip: Amon, project: OBS, type: reanaly,
-         version: TS4.02, start_year: 1905, end_year: 2005, tier: 2}
-      - {dataset: MIROC6, mip: Amon, project: CMIP6,
-         exp: historical, ensemble: r1i1p1f1,
-         grid: gn, start_year: 1905, end_year: 2005}
-      - {dataset: GFDL-CM4, mip: Amon, project: CMIP6,
-         exp: historical, ensemble: r1i1p1f1,
-         grid: gr1, start_year: 1905, end_year: 2005}
-      - {dataset: IPSL-CM6A-LR, mip: Amon, project: CMIP6,
-         exp: historical, ensemble: r1i1p1f1,
-         grid: gr, start_year: 1905, end_year: 2005}
-      # - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
-      #   exp: historical, ensemble: r1i1p1f1,
-      #   grid: gn, start_year: 1905, end_year: 2005}
-      # - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
-      #   exp: historical, ensemble: r1i1p1f1,
-      #   grid: gn, start_year: 1905, end_year: 2005}
-    scripts:
-      script1:
-        script: droughtindex/diag_save_spei.r
-
-  spei_collect1:
-    description: Wrapper to collect and plot previously calculated SPEI index
-    scripts:
-      spei_collect1:
-        script: droughtindex/collect_spei_obs_multi.py
-        ancestors: ['diagnostic1/script1']
-
   diagnostic2:
     description: Calculating SPEI index for models
     variables:
@@ -74,21 +30,51 @@ diagnostics:
         preprocessor: preprocessor2
         field: T2Ms
     additional_datasets:
-      - {dataset: MIROC6, mip: Amon, project: CMIP6,
-         exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gn, start_year: 1950, end_year: 2100}
-      - {dataset: GFDL-CM4, mip: Amon, project: CMIP6,
-         exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gr1, start_year: 1950, end_year: 2100}
-      - {dataset: IPSL-CM6A-LR, mip: Amon, project: CMIP6,
-         exp: [historical, ssp585], ensemble: r1i1p1f1,
-         grid: gr, start_year: 1950, end_year: 2100}
-      # - {dataset: BCC-ESM1, mip: Amon, project: CMIP6,
-      #   exp: [historical, ssp585], ensemble: r1i1p1f1,
-      #   grid: gn, start_year: 1950, end_year: 2100}
-      # - {dataset: MRI-ESM2-0, mip: Amon, project: CMIP6,
-      #   exp: [historical, ssp585], ensemble: r1i1p1f1,
-      #   grid: gn, start_year: 1950, end_year: 2100}
+      - {dataset: MIROC6, institute: MIROC, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gn,
+         start_year: 1950, end_year: 2100}
+      - {dataset: GFDL-CM4, institute: NOAA-GFDL, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gr1,
+         start_year: 1950, end_year: 2100}
+      - {dataset: IPSL-CM6A-LR, institute: IPSL, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gr,
+         start_year: 1950, end_year: 2100}
+      - {dataset: MRI-ESM2-0, institute: MRI, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gn,
+         start_year: 1950, end_year: 2100}
+      - {dataset: CNRM-ESM2-1, institute: CNRM-CERFACS, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f2, grid: gr,
+         start_year: 1950, end_year: 2100}
+      - {dataset: CNRM-CM6-1, institute: CNRM-CERFACS, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f2, grid: gr,
+         start_year: 1950, end_year: 2100}
+      - {dataset: BCC-CSM2-MR, institute: BCC, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gn,
+         start_year: 1950, end_year: 2100}
+      # - {dataset: CanESM5, institute: CCCma, mip: Amon,
+      #   project: CMIP6, exp: [historical, ssp585],
+      #   ensemble: r1i1p1f1, grid: gn,
+      #   start_year: 1950, end_year: 2100}
+      # - {dataset: GISS-E2-1-H, institute: GISS, mip: Amon,
+      #   project: CMIP6, exp: [historical, ssp585],
+      #   ensemble: r1i1p1f1, grid: gn,
+      #   start_year: 1950, end_year: 2100}
+      # - {dataset: GISS-E2-1-G, institute: GISS, mip: Amon,
+      #   project: CMIP6, exp: [historical, ssp585],
+      #   ensemble: r1i1p1f1,  grid: gn,
+      #   start_year: 1950, end_year: 2100}
+      # - {dataset: INM-CM4-8, institute: INM, mip: Amon,
+      #   project: CMIP6, exp: [historical, ssp585],
+      #   ensemble: r1i1p1f1, grid: gr1, 
+      #   start_year: 1950, end_year: 2100}
+       
     scripts:
       script2:
         script: droughtindex/diag_save_spei.r
@@ -97,5 +83,5 @@ diagnostics:
     description: Wrapper to collect and plot previously calculated SPEI index
     scripts:
       spei_collect2:
-        script: droughtindex/collect_spei_model.py
+        script: droughtindex/collect_spei_newmodel.py
         ancestors: ['diagnostic2/script2']

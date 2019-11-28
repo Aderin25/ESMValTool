@@ -211,10 +211,6 @@ def plot_map_spi(cfg, cube, levels, add_to_filename='', name=''):
     # mesh_ind = np.ix_(range(360), index)
     spi = spi[np.ix_(range(len(lats)), index)]
 
-    # arr1inds = lons.argsort()
-    # lons = lons[arr1inds]
-    # spi = spi[:,arr1inds,:]
-
     # Get data set name from cube
     print("cube.metadata.attributes")
     print(cube.metadata.attributes)
