@@ -1,0 +1,103 @@
+---
+documentation:
+
+  description: |
+    Calculate the SPEI of few models
+  authors:
+    - schl_ma
+
+  references:
+    - andrews12grl
+
+  projects:
+    - crescendo
+
+preprocessors:
+  preprocessor2:
+    regrid:
+      target_grid: 2.0x2.0
+      scheme: linear
+
+diagnostics:
+  diagnostic2:
+    variables:
+      pr:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2Ms
+      tasmin:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2Ms
+      tasmax:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2Ms
+      sfcWind:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2Ms
+      clt:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2M
+      psl:
+        reference_dataset: MIROC6
+        preprocessor: preprocessor2
+        field: T2M
+    additional_datasets:
+      - {dataset: MIROC6, institute: MIROC, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gn,
+         start_year: 1950, end_year: 2100}
+      - {dataset: GFDL-CM4, institute: GFDL, mip: Amon,
+         project: CMIP6,  exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gr1,
+         start_year: 1950, end_year: 2100}
+      - {dataset: IPSL-CM6A-LR, institute: IPSL, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gr,
+         start_year: 1950, end_year: 2100}
+      - {dataset: MRI-ESM2-0, institute: MRI, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gn,
+         start_year: 1950, end_year: 2100}
+      - {dataset: BCC-CSM2-MR, institute: BCC, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f1, grid: gn,
+         start_year: 1950, end_year: 2100}
+      - {dataset: CNRM-CM6-1, institute: CNRM-CERFACS, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f2, grid: gr,
+         start_year: 1950, end_year: 2100}
+      - {dataset: CNRM-ESM2-1, institute: CNRM-CERFACS, mip: Amon,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f2, grid: gr,
+         start_year: 1950, end_year: 2100}
+      # - {dataset: CanESM5, institute: CCCma, mip: Amon,
+      #   project: CMIP6, exp: [historical, ssp585],
+      #   ensemble: r1i1p1f1, grid: gn,
+      #   start_year: 1950, end_year: 2100}
+      # - {dataset: GISS-E2-1-H, institute: GISS, mip: Amon,
+      #   project: CMIP6, exp: [historical, ssp585],
+      #   ensemble: r1i1p1f1, grid: gn,
+      #   start_year: 1950, end_year: 2100}
+      # - {dataset: GISS-E2-1-G, institute: GISS, mip: Amon,
+      #   project: CMIP6, exp: [historical, ssp585],
+      #   ensemble: r1i1p1f1, grid: gn,
+      #   start_year: 1950, end_year: 2100}
+      # - {dataset: INM-CM4-8, institute: GISS, mip: Amon,
+      #   project: CMIP6, exp: [historical, ssp585], 
+      #   ensemble: r1i1p1f1, grid: gr1,
+      #   start_year: 1950, end_year: 2100}
+  
+    scripts:
+      script2:
+        script: droughtindex/diag_save_spei_pen.r
+
+  spei_collect2:
+    description: Wrapper to collect and plot previously calculated SPEI index
+    scripts:
+      spei_collect2:
+        script: droughtindex/collect_spei_newmodel.py
+        ancestors: ['diagnostic2/script2']     

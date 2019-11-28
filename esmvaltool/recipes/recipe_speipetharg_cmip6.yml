@@ -1,0 +1,62 @@
+---
+documentation:
+
+  description: |
+    Calculate the SPEI of few models
+  authors:
+    - schl_ma
+
+  references:
+    - andrews12grl
+
+  projects:
+    - crescendo
+
+preprocessors:
+  preprocessor2:
+    regrid:
+      target_grid: 2.0x2.0
+      scheme: linear
+
+diagnostics:
+  diagnostic2:
+    variables:
+      pr:
+        reference_dataset: CNRM-CM6-1
+        preprocessor: preprocessor2
+        field: T2Ms
+        mip: Amon
+      tasmin:
+        reference_dataset: CNRM-CM6-1
+        preprocessor: preprocessor2
+        field: T2Ms
+        mip: Amon
+      tasmax:
+        reference_dataset: CNRM-CM6-1
+        preprocessor: preprocessor2
+        field: T2Ms
+        mip: Amon
+    additional_datasets:
+      - {dataset: CNRM-CM6-1, institute: CNRM-CERFACS,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f2, grid: gr,
+         start_year: 1950, end_year: 2100}
+      - {dataset: CNRM-ESM2-1, institute: CNRM-CERFACS,
+         project: CMIP6, exp: [historical, ssp585],
+         ensemble: r1i1p1f2, grid: gr,
+         start_year: 1950, end_year: 2100}
+      - {dataset: UKESM1-0-LL, institute: MOHC,
+         project: CMIP6,  exp: [historical, ssp585],
+         ensemble: r2i1p1f2, grid: gn,
+         start_year: 1950, end_year: 2100}
+
+    scripts:
+      script2:
+        script: droughtindex/diag_save_spei_harg.r
+
+  spei_collect2:
+    description: Wrapper to collect and plot previously calculated SPEI index
+    scripts:
+      spei_collect2:
+        script: droughtindex/collect_spei_model.py
+        ancestors: ['diagnostic2/script2']
